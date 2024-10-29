@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Ventas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Registro de Ventas</h1>
+    </header>
+    <main><br><br>
+        <section id="menu">
+            <h2>Menú</h2>
+            <ul>
+                <li>
+                    <input type="checkbox" id="pizza-comun" name="pedido" value="Pizza común" data-precio="4000">
+                    <label for="pizza-comun">Pizza común ($4.000)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="pizza-especial" name="pedido" value="Pizza especial" data-precio="5000">
+                    <label for="pizza-especial">Pizza especial ($5.000)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="hamburguesa" name="pedido" value="Hamburguesa" data-precio="3000">
+                    <label for="hamburguesa">Hamburguesa ($3.000)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="papas" name="pedido" value="Papas" data-precio="1000">
+                    <label for="hamburguesa">Papas fritas ($1.000)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="cerveza" name="pedido" value="Cerveza" data-precio="2000">
+                    <label for="hamburguesa">Cerveza ($2.000)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="gaseosa" name="pedido" value="Gaseosa 1.5l" data-precio="1500">
+                    <label for="gaseosa">Gaseosa 1.5l ($1.500)</label>
+                </li>
+            </ul>
+        </section>
+        <section id="pedido">
+            <h2>Datos del pedido</h2>
+            <form id="formulario">
+                <label>Nombre del cliente:</label>
+                <input type="text" id="nombre-cliente" required>
+                <br>
+                <label>Dirección del cliente:</label>
+                <input type="text" id="direccion-cliente" required>
+                <br>
+                <label>Costo de envío ($):</label>
+                <input type="number" id="costo-envio" required>
+                <br>
+                <label>Tiempo estimado de demora (minutos):</label>
+                <select id="tiempo-demora" required>
+                    <option value="10">10 minutos</option>
+                    <option value="15">15 minutos</option>
+                    <option value="20">20 minutos</option>
+                    <option value="30">30 minutos</option>
+                    <option value="45">45 minutos</option>
+                </select>
+                <br>
+                <button id="realizar-pedido" type="button">Realizar pedido</button>
+            </form>
+        </section><br><br><br><br>
+        <section id="resumen">
+            <h2>Resumen de pedidos</h2>
+            <div id="pedido-resumen"></div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("realizar-pedido").addEventListener("click", function (event) {
+                event.preventDefault();
+
+                // Obtener el nombre, dirección y costo de envío del cliente
+                const nombreCliente = document.getElementById("nombre-cliente").value;
+                const direccionCliente = document.getElementById("direccion-cliente").value;
+                const costoEnvio = parseFloat(document.getElementById("costo-envio").value) || 0;
+                const tiempoDemora = document.getElementById("tiempo-demora").value;
+
+                // Obtener los elementos seleccionados del menú
+                const pedidos = document.querySelectorAll('input[name="pedido"]:checked');
+                let pedidoSeleccionado = "";
+                let totalPedido = 0;
+
+                pedidos.forEach((item) => {
+                    pedidoSeleccionado += `${item.value} ($${parseFloat(item.dataset.precio).toFixed(2)})<br>`;
+                    totalPedido += parseFloat(item.dataset.precio);
+                });
+
+                // Calcular el total general incluyendo el costo de envío
+                const totalGeneral = totalPedido + costoEnvio;
+
+                // Crear un nuevo elemento para el pedido actual
+                const nuevoPedido = document.createElement("div");
+                nuevoPedido.classList.add("pedido-item"); // Para que se pueda dar estilo a cada pedido
+                nuevoPedido.innerHTML = `
+                    <strong>Nombre del cliente:</strong> ${nombreCliente}<br>
+                    <strong>Dirección del cliente:</strong> ${direccionCliente}<br>
+                    <strong>Pedido:</strong><br> ${pedidoSeleccionado}
+                    <strong>Costo de envío:</strong> $${costoEnvio.toFixed(2)}<br>
+                    <strong>Total pedido (sin envío):</strong> $${totalPedido.toFixed(2)}<br>
+                    <strong>Total general:</strong> $${totalGeneral.toFixed(2)}<br>
+                    <strong>Tiempo estimado de demora:</strong> ${tiempoDemora} minutos
+                    <hr>
+                `;
+
+                // Agregar el nuevo pedido al contenedor de pedidos
+                document.getElementById("pedido-resumen").appendChild(nuevoPedido);
+
+                // Limpiar el formulario y los checkboxes seleccionados
+                document.getElementById("formulario").reset();
+                pedidos.forEach(item => item.checked = false);
+            });
+        });
+    </script>
+</body>
+</html>
